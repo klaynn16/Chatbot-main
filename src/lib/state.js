@@ -1,10 +1,9 @@
 // ============= GLOBAL STATE & MOCK DATA =============
 
-export const MOCK_USERS = [
-  { email: 'admin@university.edu', password: 'admin123', role: 'admin', name: 'Admin User' },
-];
+// optional only; admin now uses backend
+export const MOCK_USERS = [];
 
-// mock database
+// mock student login only
 export const registeredStudents = [
   { studentNumber: '24-22-241', password: 'student123', name: 'Stephanie', program: 'BS Information Technology', role: 'student' },
 ];
@@ -18,13 +17,12 @@ export const state = {
   sidebarCollapsed: false,
   currentPage: 'chat',
 
-  // announcements now come from backend
+  // now loaded from backend
   announcements: [],
-
   events: [],
-
   chatLogs: [],
 
+  // admin panel already connected, chatbot can still use this for now
   knowledgeBase: [
     { id: 'kb1', question: 'How do I enroll?', answer: "Visit the Registrar's Office or log in to the student portal." },
     { id: 'kb2', question: 'What are the admission requirements?', answer: 'Form 138, Certificate of Good Moral Character, PSA Birth Certificate, 2x2 ID photos, and application form.' },
