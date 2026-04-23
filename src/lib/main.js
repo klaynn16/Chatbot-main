@@ -6,7 +6,6 @@ const BOT_AVATAR = '/ai-avatar.png';
 let _renderedMsgIds = new Set();
 let _renderedConvoId = null;
 
-
 export function createConversation(firstMsg) {
   const id = uuid();
   const msgs = [
@@ -109,10 +108,47 @@ export function sendMessage(content) {
   const chatInput = document.getElementById('chat-input');
   const chatSendBtn = document.getElementById('chat-send-btn');
 
+  const convo = getActiveConvo();
+  if (!convo || !content.trim()) return;
+
+  const userMessage = content.trim();
+
+  const userMsg = {
+    id: uuid(),
+    role: 'user',
+    content: userMessage,
+    timestamp: new Date()
+  };
+
+  convo.messages.push(userMsg);
+  renderChat();
+
+  const botReply = getBotReply(userMessage);
+
+  const botMsg = {
+    id: uuid(),
+    role: 'assistant',
+    content: botReply,
+    timestamp: new Date()
+  };
+
+  convo.messages.push(botMsg);
+  renderChat();
+
+  fetch("http://localhost/admin_db/api/chatlogs/add.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      student_number: state.currentUser?.studentNumber || "unknown",
+      question: userMessage,
+      response: botReply
+    })
+  }).catch(err => console.error("Log save error:", err));
+
   chatInput.value = '';
   chatSendBtn.disabled = false;
-
-  return; //
 }
 
 export function newChat() {

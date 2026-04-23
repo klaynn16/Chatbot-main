@@ -78,20 +78,43 @@ export function initLogin(onLoginSuccess) {
         loginError.classList.remove('hidden');
         return;
       }
-      const admin = MOCK_USERS.find(u => u.email === id && u.password === password);
-      if (admin) {
-        loginError.classList.add('hidden');
-        state.currentUser = admin;
-        onLoginSuccess(admin);
-        return;
-      }
-      const student = registeredStudents.find(s => s.studentNumber === id && s.password === password);
-      if (student) {
-        loginError.classList.add('hidden');
-        state.currentUser = student;
-        onLoginSuccess(student);
-        return;
-      }
+else {
+  if (!id || !password) {
+    loginError.textContent = 'Please fill in all fields.';
+    loginError.classList.remove('hidden');
+    return;
+  }
+
+  fetch("http://localhost/admin_db/api/login.php", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      id: id,
+      password: password
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.status === "success") {
+      loginError.classList.add('hidden');
+
+      // save logged user
+      state.currentUser = data.user;
+
+      onLoginSuccess(data.user);
+    } else {
+      loginError.textContent = data.message;
+      loginError.classList.remove('hidden');
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    loginError.textContent = "Cannot connect to server.";
+    loginError.classList.remove('hidden');
+  });
+}
 
       loginError.textContent = 'Invalid credentials. Please check your student number/email and password.';
       loginError.classList.remove('hidden');
